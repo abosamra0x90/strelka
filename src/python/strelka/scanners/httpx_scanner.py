@@ -123,7 +123,8 @@ def normalize_external_path(raw_path: str, base_dir: Optional[Path] = None) -> O
     if raw_str.startswith("/mnt/") and len(raw_str) > 6:
         drive_letter = raw_str[5]
         rest = raw_str[7:] if raw_str[6] == "/" else raw_str[6:]
-        candidate = Path(f"{drive_letter.upper()}:\\{rest.replace('/', '\\')}")
+        windows_rest = rest.replace("/", "\\")
+        candidate = Path(f"{drive_letter.upper()}:\\{windows_rest}")
         if candidate.exists():
             return candidate
     return None
