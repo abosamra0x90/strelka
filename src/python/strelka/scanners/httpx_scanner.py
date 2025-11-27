@@ -582,7 +582,6 @@ class HttpxScanner(strelka.Scanner):
             self.event["httpx"].update(transformed)
 
             # نطلع IOCs من الداتا
-            self._extract_iocs(url, record, transformed)
 
         except Exception as exc:
             self.flags.append("httpx_error")
