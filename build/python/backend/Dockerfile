@@ -73,10 +73,7 @@ RUN apt-get -q update && \
     unrar \
     unzip \
     upx \
-    jq \
-    wget \
-    fonts-liberation \
-    libnss3 && \
+    jq && \
 #clean up zeek install
     cp /opt/zeek/bin/zeek /bin/zeek && \
     rm -rf /opt/zeek/share/btest /opt/zeek/bin && \
@@ -109,25 +106,6 @@ RUN apt-get -q update && \
     cd yara-python-$YARA_VERSION/ && \
     python3 setup.py build --dynamic-linking && \
     python3 setup.py install
-
-# -------------------------------
-# Install httpx CLI for HttpxScanner
-# -------------------------------
-RUN cd /tmp/ && \
-    wget -q https://github.com/projectdiscovery/httpx/releases/latest/download/httpx_1.6.9_linux_amd64.zip && \
-    unzip httpx_1.6.9_linux_amd64.zip httpx && \
-    mv httpx /usr/local/bin/httpx && \
-    chmod +x /usr/local/bin/httpx && \
-    rm httpx_1.6.9_linux_amd64.zip
-
-# NOTE:
-# مش بنسبّت Chromium من apt عشان مش متاح على Ubuntu 22.04 جوّه الكونتينر.
-# httpx/rod هيحاولوا يحمّلوا browser مناسب في runtime جوّه الـ cache.
-# لو حبيت بعدين تثبّت Google Chrome أو Chromium من مصدر خارجي، نقدر نزود ده هنا،
-# وساعتها نرجّع نستخدم متغيّرات البيئة دول:
-# ENV ROD_BROWSER_PATH=/path/to/chrome
-# ENV CHROME_PATH=/path/to/chrome
-
 
 #Copy Suricata config to default location
 COPY configs/python/backend/suricata/suricata.yaml /etc/suricata/suricata.yaml
