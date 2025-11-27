@@ -75,7 +75,6 @@ RUN apt-get -q update && \
     upx \
     jq \
     wget \
-    chromium \
     fonts-liberation \
     libnss3 && \
 #clean up zeek install
@@ -121,10 +120,14 @@ RUN cd /tmp/ && \
     chmod +x /usr/local/bin/httpx && \
     rm httpx_1.6.9_linux_amd64.zip
 
-# Configure headless browser path for httpx/rod
-ENV ROD_BROWSER_PATH=/usr/bin/chromium
-ENV CHROME_PATH=/usr/bin/chromium
-# لو عندك باكدج تانية للكروم (chromium-browser مثلاً) غيّر المسار دول حسب الباينري
+# NOTE:
+# مش بنسبّت Chromium من apt عشان مش متاح على Ubuntu 22.04 جوّه الكونتينر.
+# httpx/rod هيحاولوا يحمّلوا browser مناسب في runtime جوّه الـ cache.
+# لو حبيت بعدين تثبّت Google Chrome أو Chromium من مصدر خارجي، نقدر نزود ده هنا،
+# وساعتها نرجّع نستخدم متغيّرات البيئة دول:
+# ENV ROD_BROWSER_PATH=/path/to/chrome
+# ENV CHROME_PATH=/path/to/chrome
+
 
 #Copy Suricata config to default location
 COPY configs/python/backend/suricata/suricata.yaml /etc/suricata/suricata.yaml
