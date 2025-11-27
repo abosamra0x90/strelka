@@ -772,7 +772,7 @@ scanners:
           - 'application/zlib'
           - 'zlib_file'
       priority: 5
-  'TestScan':
+  'HttpxScanner':
     - positive:
         flavors:
           - 'text/plain'
