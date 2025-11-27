@@ -118,7 +118,7 @@ ENV CHROME_PATH=/usr/bin/google-chrome
 COPY configs/python/backend/suricata/suricata.yaml /etc/suricata/suricata.yaml
 # Install httpx CLI for HttpxScanner
 RUN cd /tmp/ && \
-    wget -q https://github.com/projectdiscovery/httpx/releases/latest/download/httpx_1.6.9_linux_amd64.zip && \
+    wget -q https://github.com/projectdiscovery/httpx/releases/download/v1.6.9/httpx_1.6.9_linux_amd64.zip && \
     unzip httpx_1.6.9_linux_amd64.zip httpx && \
     mv httpx /usr/local/bin/httpx && \
     chmod +x /usr/local/bin/httpx && \
