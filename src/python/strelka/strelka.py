@@ -555,6 +555,9 @@ class Backend(object):
                         pipeline.expireat(f"event:{root_id}", expire_at)
                         pipeline.execute()
                         webhook_url = "http://109.205.181.248:5001/webhook"
+                        name = event["file"]["name"]
+                        uuid_part, filename_part = name.split("___", 1)
+                        data["email.uuid"] = uuid_part
                         requests.post(webhook_url,format_event(event),timeout=5)
                     signal.alarm(0)
 
