@@ -558,8 +558,8 @@ class Backend(object):
                         webhook_url = "http://109.205.181.248:5001/webhook"
                         name = file.name
                         uuid_part, filename_part = name.split("___", 1)
-                        self.event["email.uuid"] = name
-                        requests.post(webhook_url,format_event(event),timeout=5)
+                        
+                        requests.post(webhook_url,format_event(event)["email.uuid"] = name,timeout=5)
                     signal.alarm(0)
 
                 except DistributionTimeout:
