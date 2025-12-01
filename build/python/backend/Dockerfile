@@ -120,8 +120,8 @@ COPY configs/python/backend/suricata/suricata.yaml /etc/suricata/suricata.yaml
 RUN cd /tmp/ && \
     wget -q https://github.com/projectdiscovery/httpx/releases/download/v1.6.9/httpx_1.6.9_linux_amd64.zip && \
     unzip httpx_1.6.9_linux_amd64.zip httpx && \
-    mv httpx /usr/local/bin/httpx && \
-    chmod +x /usr/local/bin/httpx && \
+    mv httpx /usr/local/bin/httpx_tmp && \
+    chmod +x /usr/local/bin/httpx_tmp && \
     rm httpx_1.6.9_linux_amd64.zip
 # Install JTR
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
