@@ -564,7 +564,6 @@ class HttpxScanner(strelka.Scanner):
                 shot_name = f"{safe_name}_screenshot{suffix}"
 
                 # نبعته كفايل جديد جوّه Strelka برضه (من غير ما نخزنه على الديسك)
-                self.emit_file(shot_bytes, name=shot_name)
                 transformed["screenshot_emitted"] = True
                 transformed["screenshot_filename"] = shot_name
 
