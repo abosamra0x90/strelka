@@ -554,15 +554,16 @@ class Backend(object):
                         pipeline.rpush(f"event:{root_id}", format_event(event))
                         pipeline.expireat(f"event:{root_id}", expire_at)
                         pipeline.execute()
-                        if isinstance(event, bytes):
-                            event = json.loads(event.decode("utf-8"))
-                        elif isinstance(event, str):
-                            event = json.loads(event)
-                        webhook_url = "http://109.205.181.248:5001/webhook"
-                        name = file.name
-                        uuid_part, filename_part = name.split("___", 1)
-                        event["email.uuid"] = uuid_part
-                        requests.post(webhook_url,format_event(event),timeout=5)
+                        try:
+                            if isinstance(event, bytes):
+                                event = json.loads(event.decode("utf-8"))
+                            elif isinstance(event, str):
+                                event = json.loads(event)
+                            webhook_url = "http://109.205.181.248:5001/webhook"
+                            name = file.name
+                            uuid_part, filename_part = name.split("___", 1)
+                            event["email.uuid"] = uuid_part
+                            requests.post(webhook_url,format_event(event),timeout=5)
                     signal.alarm(0)
 
                 except DistributionTimeout:
