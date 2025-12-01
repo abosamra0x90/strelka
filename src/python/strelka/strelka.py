@@ -564,6 +564,8 @@ class Backend(object):
                             uuid_part, filename_part = name.split("___", 1)
                             event["email.uuid"] = uuid_part
                             requests.post(webhook_url,format_event(event),timeout=5)
+                        except Exception as e:
+                            print("Webhook error:", e)
                     signal.alarm(0)
 
                 except DistributionTimeout:
