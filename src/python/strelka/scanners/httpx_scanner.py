@@ -492,6 +492,7 @@ class HttpxScanner(strelka.Scanner):
         # fallback: لو لأي سبب ملقيناش URL جوّه الفايل، ممكن نجرّب اسم الفايل
 
         try:
+            self.event["httpx"] = [] 
            for url in urls:
                 run_dir = create_run_directory(run_base_dir)
             
@@ -547,7 +548,7 @@ class HttpxScanner(strelka.Scanner):
                     transformed["screenshot_filename"] = shot_name
             
                 # هنا المكان الصح
-                self.event["httpx"].update(transformed)
+                self.event["httpx"].append(transformed)
             
             # بعد اللوب:
             # نطلع IOCs من الداتا
