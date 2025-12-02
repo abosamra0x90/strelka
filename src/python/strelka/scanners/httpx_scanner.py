@@ -502,7 +502,8 @@ class HttpxScanner(strelka.Scanner):
                     self.flags.append("httpx_no_url")
                     return
             
-                self.event["httpx"]["input_url"] = url
+                transformed["input_url"] = url
+
             
                 internal_output_rel = Path("httpx_output.jsonl")
                 internal_output = run_dir / internal_output_rel
