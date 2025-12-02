@@ -488,7 +488,7 @@ class HttpxScanner(strelka.Scanner):
         # s3_bucket = options.get("s3_bucket")  # لو حبيت تفعّل S3 بعدين
         # نطلّع الـ URL من محتوى الـ txt (أول سطر مش فاضي)
         urls = self._extract_url_from_text_file(data)
-        
+        print(len(urls))
         # fallback: لو لأي سبب ملقيناش URL جوّه الفايل، ممكن نجرّب اسم الفايل
 
         try:
