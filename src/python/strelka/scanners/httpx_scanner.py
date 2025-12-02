@@ -574,7 +574,7 @@ class HttpxScanner(strelka.Scanner):
                     #         transformed["screenshot_s3_error"] = str(e)
     
                 # نحط الـ JSON النهائي في event
-                self.event["httpx"].update(transformed)
+            self.event["httpx"].update(transformed)
 
             # نطلع IOCs من الداتا
 
