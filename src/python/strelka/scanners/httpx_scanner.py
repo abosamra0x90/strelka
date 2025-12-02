@@ -493,7 +493,7 @@ class HttpxScanner(strelka.Scanner):
 
         try:
             self.event["httpx"] = [] 
-           for url in urls:
+            for url in urls:
                 run_dir = create_run_directory(run_base_dir)
             
                 if not url:
