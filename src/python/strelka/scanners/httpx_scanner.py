@@ -484,7 +484,7 @@ class HttpxScanner(strelka.Scanner):
         self.event.setdefault("httpx", {})
         
         httpx_cmd = options.get("httpx_cmd", "httpx_tmp")
-        run_base_dir = options.get("run_base_dir", "httpx_tmp")
+        run_base_dir = options.get("run_base_dir", "/tmp/httpx_tmp")
         # s3_bucket = options.get("s3_bucket")  # لو حبيت تفعّل S3 بعدين
         # نطلّع الـ URL من محتوى الـ txt (أول سطر مش فاضي)
         urls = self._extract_url_from_text_file(data)
