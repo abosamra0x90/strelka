@@ -551,13 +551,8 @@ class HttpxScanner(strelka.Scanner):
         
                 # سجل النتيجة  
                 self.event["httpx"].append(transformed)
-        
+
             except Exception as exc:
-                error_obj = {
-                    "input_url": url,
-                    "error": str(exc),
-                    "trace": traceback.format_exc(),
-                }
-                self.event["httpx"].append(error_obj)
                 self.flags.append("httpx_error")
+                self.event["httpx"]["error"] = str(exc)
 
