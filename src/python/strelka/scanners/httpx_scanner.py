@@ -466,12 +466,11 @@ class HttpxScanner(strelka.Scanner):
             text = data.decode("utf-8", errors="ignore")
         except Exception:
             return None
-
+        test = []
         for line in text.splitlines():
-            line = line.strip()
-            if line:
-                return line
-
+            test.append(line.strip())
+        if len(test) > 0:
+            return test 
         return None
 
     def scan(self, data, file, options, expire_at):
@@ -483,102 +482,99 @@ class HttpxScanner(strelka.Scanner):
         - expire_at: وقت انتهاء الـ job
         """
         self.event.setdefault("httpx", {})
-
+        
         httpx_cmd = options.get("httpx_cmd", "httpx_tmp")
         run_base_dir = options.get("run_base_dir", "httpx_tmp")
         # s3_bucket = options.get("s3_bucket")  # لو حبيت تفعّل S3 بعدين
-
         # نطلّع الـ URL من محتوى الـ txt (أول سطر مش فاضي)
-        url = self._extract_url_from_text_file(data)
-
+        urls = self._extract_url_from_text_file(data)
+        
         # fallback: لو لأي سبب ملقيناش URL جوّه الفايل، ممكن نجرّب اسم الفايل
         if not url:
             url = file.name
-
         if not url:
             self.flags.append("httpx_no_url")
             return
-
         self.event["httpx"]["input_url"] = url
-
         try:
-            # run directory لكل عملية - ده الوحيد اللي بيتخلق على الديسك من كودنا
-            run_dir = create_run_directory(run_base_dir)
-
-            internal_output_rel = Path("httpx_output.jsonl")
-            internal_output = run_dir / internal_output_rel
-
-            # نشغّل httpx (هو اللي هيكتب httpx_output.jsonl + screenshots جوّه run_dir)
-            run_httpx(httpx_cmd, url, internal_output_rel, DEFAULT_HTTPX_ARGS, run_dir)
-
-            # نقرأ آخر record من httpx_output.jsonl
-            record = read_last_record(internal_output)
-
-            safe_name = sanitize_name(record.get("host") or urlparse(url).netloc or "target")
-
-            # نكوّن JSON normalized
-            transformed = transform_record(record)
-            transformed["raw_httpx_output"] = str(internal_output)
-            transformed["httpx_run_directory"] = str(run_dir)
-
-            # ================== BODY HANDLING (IN-MEMORY) ==================
-            body_bytes = extract_body_bytes(record, base_dir=run_dir)
-            if body_bytes:
-                sha256_body = hashlib.sha256(body_bytes).hexdigest()
-                transformed["downloaded_body_sha256"] = sha256_body
-
-                content_type = infer_content_type(record)
-                ext = extension_from_content_type(content_type)
-                filename = f"{safe_name}{ext}"
-
-                # نبعته كفايل جديد جوّه Strelka (من غير ما نخزنه على الديسك)
-                self.emit_file(body_bytes, name=filename)
-                transformed["downloaded_body_emitted"] = True
-                transformed["downloaded_body_filename"] = filename
-
-                # مثال لرفع البودي على S3 (كله كومنت، مش شغال):
-                #
-                # if s3_bucket:
-                #     try:
-                #         s3_info = upload_to_s3(body_bytes, s3_bucket, sha256_body)
-                #         transformed["downloaded_body_s3"] = s3_info
-                #     except Exception as e:
-                #         self.flags.append("httpx_s3_file_upload_failed")
-                #         transformed["downloaded_body_s3_error"] = str(e)
-
-            # ================== SCREENSHOT HANDLING (IN-MEMORY) ==================
-            shot_bytes = resolve_screenshot_bytes(record, base_dir=run_dir)
-            if shot_bytes:
-                sha256_shot = hashlib.sha256(shot_bytes).hexdigest()
-                transformed["screenshot_sha256"] = sha256_shot
-
-                # نحدد اسم للسكرينشوت (مش بنكتب أي فايل على الديسك، ده بس اسم للـ emit_file)
-                suffix = ".png"
-                # لو httpx حاطط امتداد في المسار الأصلي نقدر نستعمله
-                screenshot_path = record.get("screenshot_path") or record.get("screenshot_path_rel")
-                if isinstance(screenshot_path, str):
-                    p = Path(screenshot_path)
-                    if p.suffix:
-                        suffix = p.suffix
-
-                shot_name = f"{safe_name}_screenshot{suffix}"
-
-                # نبعته كفايل جديد جوّه Strelka برضه (من غير ما نخزنه على الديسك)
-                transformed["screenshot_emitted"] = True
-                transformed["screenshot_filename"] = shot_name
-
-                # مثال لرفع السكرينشوت على S3 (كله كومنت):
-                #
-                # if s3_bucket:
-                #     try:
-                #         s3_info = upload_to_s3(shot_bytes, s3_bucket, sha256_shot)
-                #         transformed["screenshot_s3"] = s3_info
-                #     except Exception as e:
-                #         self.flags.append("httpx_s3_screenshot_upload_failed")
-                #         transformed["screenshot_s3_error"] = str(e)
-
-            # نحط الـ JSON النهائي في event
-            self.event["httpx"].update(transformed)
+            for url in urls:
+                # run directory لكل عملية - ده الوحيد اللي بيتخلق على الديسك من كودنا
+                run_dir = create_run_directory(run_base_dir)
+    
+                internal_output_rel = Path("httpx_output.jsonl")
+                internal_output = run_dir / internal_output_rel
+    
+                # نشغّل httpx (هو اللي هيكتب httpx_output.jsonl + screenshots جوّه run_dir)
+                run_httpx(httpx_cmd, url, internal_output_rel, DEFAULT_HTTPX_ARGS, run_dir)
+    
+                # نقرأ آخر record من httpx_output.jsonl
+                record = read_last_record(internal_output)
+    
+                safe_name = sanitize_name(record.get("host") or urlparse(url).netloc or "target")
+    
+                # نكوّن JSON normalized
+                transformed = transform_record(record)
+                transformed["raw_httpx_output"] = str(internal_output)
+                transformed["httpx_run_directory"] = str(run_dir)
+    
+                # ================== BODY HANDLING (IN-MEMORY) ==================
+                body_bytes = extract_body_bytes(record, base_dir=run_dir)
+                if body_bytes:
+                    sha256_body = hashlib.sha256(body_bytes).hexdigest()
+                    transformed["downloaded_body_sha256"] = sha256_body
+    
+                    content_type = infer_content_type(record)
+                    ext = extension_from_content_type(content_type)
+                    filename = f"{safe_name}{ext}"
+    
+                    # نبعته كفايل جديد جوّه Strelka (من غير ما نخزنه على الديسك)
+                    self.emit_file(body_bytes, name=filename)
+                    transformed["downloaded_body_emitted"] = True
+                    transformed["downloaded_body_filename"] = filename
+    
+                    # مثال لرفع البودي على S3 (كله كومنت، مش شغال):
+                    #
+                    # if s3_bucket:
+                    #     try:
+                    #         s3_info = upload_to_s3(body_bytes, s3_bucket, sha256_body)
+                    #         transformed["downloaded_body_s3"] = s3_info
+                    #     except Exception as e:
+                    #         self.flags.append("httpx_s3_file_upload_failed")
+                    #         transformed["downloaded_body_s3_error"] = str(e)
+    
+                # ================== SCREENSHOT HANDLING (IN-MEMORY) ==================
+                shot_bytes = resolve_screenshot_bytes(record, base_dir=run_dir)
+                if shot_bytes:
+                    sha256_shot = hashlib.sha256(shot_bytes).hexdigest()
+                    transformed["screenshot_sha256"] = sha256_shot
+    
+                    # نحدد اسم للسكرينشوت (مش بنكتب أي فايل على الديسك، ده بس اسم للـ emit_file)
+                    suffix = ".png"
+                    # لو httpx حاطط امتداد في المسار الأصلي نقدر نستعمله
+                    screenshot_path = record.get("screenshot_path") or record.get("screenshot_path_rel")
+                    if isinstance(screenshot_path, str):
+                        p = Path(screenshot_path)
+                        if p.suffix:
+                            suffix = p.suffix
+    
+                    shot_name = f"{safe_name}_screenshot{suffix}"
+    
+                    # نبعته كفايل جديد جوّه Strelka برضه (من غير ما نخزنه على الديسك)
+                    transformed["screenshot_emitted"] = True
+                    transformed["screenshot_filename"] = shot_name
+    
+                    # مثال لرفع السكرينشوت على S3 (كله كومنت):
+                    #
+                    # if s3_bucket:
+                    #     try:
+                    #         s3_info = upload_to_s3(shot_bytes, s3_bucket, sha256_shot)
+                    #         transformed["screenshot_s3"] = s3_info
+                    #     except Exception as e:
+                    #         self.flags.append("httpx_s3_screenshot_upload_failed")
+                    #         transformed["screenshot_s3_error"] = str(e)
+    
+                # نحط الـ JSON النهائي في event
+                self.event["httpx"].update(transformed)
 
             # نطلع IOCs من الداتا
 
