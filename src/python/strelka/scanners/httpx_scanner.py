@@ -490,17 +490,17 @@ class HttpxScanner(strelka.Scanner):
         urls = self._extract_url_from_text_file(data)
         
         # fallback: لو لأي سبب ملقيناش URL جوّه الفايل، ممكن نجرّب اسم الفايل
-        if not url:
-            url = file.name
-        if not url:
-            self.flags.append("httpx_no_url")
-            return
-        self.event["httpx"]["input_url"] = url
+
         try:
             for url in urls:
                 # run directory لكل عملية - ده الوحيد اللي بيتخلق على الديسك من كودنا
                 run_dir = create_run_directory(run_base_dir)
-    
+                if not url:
+                    url = file.name
+                if not url:
+                    self.flags.append("httpx_no_url")
+                    return
+                self.event["httpx"]["input_url"] = url
                 internal_output_rel = Path("httpx_output.jsonl")
                 internal_output = run_dir / internal_output_rel
     
