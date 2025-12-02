@@ -491,70 +491,73 @@ class HttpxScanner(strelka.Scanner):
         print(len(urls))
         # fallback: لو لأي سبب ملقيناش URL جوّه الفايل، ممكن نجرّب اسم الفايل
 
-        try:
-            self.event["httpx"] = [] 
-            for url in urls:
+        for url in urls:
+            transformed = {}   
+            try:
                 run_dir = create_run_directory(run_base_dir)
-            
+        
                 if not url:
                     url = file.name
                 if not url:
                     self.flags.append("httpx_no_url")
-                    return
-            
+                    continue    # متعملش return عشان list تكمل
+        
+                # بدّل الكود القديم
                 transformed["input_url"] = url
-
-            
+        
                 internal_output_rel = Path("httpx_output.jsonl")
                 internal_output = run_dir / internal_output_rel
-            
+        
                 run_httpx(httpx_cmd, url, internal_output_rel, DEFAULT_HTTPX_ARGS, run_dir)
-            
+        
                 record = read_last_record(internal_output)
+        
                 safe_name = sanitize_name(record.get("host") or urlparse(url).netloc or "target")
-            
-                transformed = transform_record(record)
+        
+                transformed.update(transform_record(record))
                 transformed["raw_httpx_output"] = str(internal_output)
                 transformed["httpx_run_directory"] = str(run_dir)
-            
+        
                 # BODY
                 body_bytes = extract_body_bytes(record, base_dir=run_dir)
                 if body_bytes:
                     sha256_body = hashlib.sha256(body_bytes).hexdigest()
                     transformed["downloaded_body_sha256"] = sha256_body
-            
+        
                     content_type = infer_content_type(record)
                     ext = extension_from_content_type(content_type)
                     filename = f"{safe_name}{ext}"
-            
+        
                     self.emit_file(body_bytes, name=filename)
                     transformed["downloaded_body_emitted"] = True
                     transformed["downloaded_body_filename"] = filename
-            
+        
                 # SCREENSHOT
                 shot_bytes = resolve_screenshot_bytes(record, base_dir=run_dir)
                 if shot_bytes:
                     sha256_shot = hashlib.sha256(shot_bytes).hexdigest()
                     transformed["screenshot_sha256"] = sha256_shot
-            
+        
                     suffix = ".png"
                     screenshot_path = record.get("screenshot_path") or record.get("screenshot_path_rel")
                     if isinstance(screenshot_path, str):
                         p = Path(screenshot_path)
                         if p.suffix:
                             suffix = p.suffix
-            
+        
                     shot_name = f"{safe_name}_screenshot{suffix}"
                     transformed["screenshot_emitted"] = True
                     transformed["screenshot_filename"] = shot_name
-            
-                # هنا المكان الصح
+        
+                # سجل النتيجة  
                 self.event["httpx"].append(transformed)
-            
-            # بعد اللوب:
-            # نطلع IOCs من الداتا
+        
+            except Exception as exc:
+                error_obj = {
+                    "input_url": url,
+                    "error": str(exc),
+                    "trace": traceback.format_exc(),
+                }
+                self.event["httpx"].append(error_obj)
+                self.flags.append("httpx_error")
 
-
-        except Exception as exc:
-            self.flags.append("httpx_error")
-            self.event["httpx"]["error"] = str(exc)
