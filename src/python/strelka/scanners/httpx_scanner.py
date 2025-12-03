@@ -549,7 +549,8 @@ class HttpxScanner(strelka.Scanner):
                     transformed["screenshot_emitted"] = True
                     transformed["screenshot_filename"] = shot_name
         
-                # سجل النتيجة  
+                # سجل النتيجة 
+                self.event["httpx"] = []
                 self.event["httpx"].append(transformed)
 
             except Exception as exc:
