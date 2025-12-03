@@ -559,10 +559,13 @@ class Backend(object):
                                 event = json.loads(event.decode("utf-8"))
                             elif isinstance(event, str):
                                 event = json.loads(event)
-                            webhook_url = "http://109.205.181.248:5001/webhook"
                             name = file.name
                             uuid_part, filename_part = name.split("___", 1)
                             event["email.uuid"] = uuid_part
+                        except Exception as e:
+                            print("Name Error:", e)
+                        try:
+                            webhook_url = "http://109.205.181.248:5001/webhook"
                             requests.post(webhook_url,format_event(event),timeout=5)
                         except Exception as e:
                             print("Webhook error:", e)
