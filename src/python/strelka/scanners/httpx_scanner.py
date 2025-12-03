@@ -490,7 +490,7 @@ class HttpxScanner(strelka.Scanner):
         urls = self._extract_url_from_text_file(data)
         print(len(urls))
         # fallback: لو لأي سبب ملقيناش URL جوّه الفايل، ممكن نجرّب اسم الفايل
-
+        self.event["httpx"] = []
         for url in urls:
             transformed = {}   
             try:
@@ -550,7 +550,7 @@ class HttpxScanner(strelka.Scanner):
                     transformed["screenshot_filename"] = shot_name
         
                 # سجل النتيجة 
-                self.event["httpx"] = []
+                
                 self.event["httpx"].append(transformed)
 
             except Exception as exc:
