@@ -39,11 +39,6 @@ services:
       - "9092:9092"
     networks:
       - net
-  
-    ports:
-      - "9092:9092"
-    networks:
-      - net
 
 
   kafka-ui:
