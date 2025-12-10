@@ -185,7 +185,7 @@ RUN poetry config virtualenvs.create false && \
 # Copy Strelka files
 COPY ./src/python/ /strelka/
 COPY ./configs/python/backend/ /etc/strelka/
-
+RUN pip install kafka-python
 # Install Strelka
 RUN cd /strelka/ && \
     python3 setup.py -q build && \
