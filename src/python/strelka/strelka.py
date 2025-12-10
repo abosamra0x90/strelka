@@ -573,7 +573,7 @@ class Backend(object):
                         except Exception as e:
                             print("Name Error:", e)
                         try:
-                             if isinstance(event, bytes):
+                            if isinstance(event, bytes):
                                 event = json.loads(event.decode("utf-8"))
                             elif isinstance(event, str):
                                 event = json.loads(event)
