@@ -573,33 +573,10 @@ class Backend(object):
                         except Exception as e:
                             print("Name Error:", e)
                         try:
-                            for k, v in list(event.items()):
-                                if isinstance(v, bytes):
-                                    event[k] = v.decode("utf-8", errors="ignore")
-                                elif not isinstance(v, (str, int, float, dict, list, bool, type(None))):
-                                    event[k] = str(v)  # fallback
-                        
-                                # لو v جوا dict
-                                if isinstance(v, dict):
-                                    for kk, vv in list(v.items()):
-                                        if isinstance(vv, bytes):
-                                            v[kk] = vv.decode("utf-8", errors="ignore")
-                                        elif not isinstance(vv, (str, int, float, dict, list, bool, type(None))):
-                                            v[kk] = str(vv)
-                        
-                                # لو v list
-                                if isinstance(v, list):
-                                    newlist = []
-                                    for item in v:
-                                        if isinstance(item, bytes):
-                                            newlist.append(item.decode("utf-8", errors="ignore"))
-                                        elif not isinstance(item, (str, int, float, dict, list, bool, type(None))):
-                                            newlist.append(str(item))
-                                        else:
-                                            newlist.append(item)
-                                    event[k] = newlist
-                        
-                            # 🔥 send final cleaned event
+                             if isinstance(event, bytes):
+                                event = json.loads(event.decode("utf-8"))
+                            elif isinstance(event, str):
+                                event = json.loads(event)
                             producer.send(ANALYSIS_TOPIC, event)
                             producer.flush()
                         
