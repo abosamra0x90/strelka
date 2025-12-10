@@ -27,6 +27,10 @@ from tldextract import TLDExtract
 from . import __namespace__
 from .telemetry.traces import get_tracer
 
+from kafka import KafkaProducer
+import json
+
+
 
 class RequestTimeout(Exception):
     """Raised when request times out."""
@@ -548,7 +552,11 @@ class Backend(object):
 
                     # Collect events for local-only
                     events.append(event)
-
+                    producer = KafkaProducer(
+                    bootstrap_servers="kafka:29092",   # جوّه الدوكر
+                    value_serializer=lambda v: json.dumps(v).encode()
+                )
+                    ANALYSIS_TOPIC = "analysis"
                     # Send event back to Redis coordinator
                     if pipeline:
                         pipeline.rpush(f"event:{root_id}", format_event(event))
@@ -565,10 +573,12 @@ class Backend(object):
                         except Exception as e:
                             print("Name Error:", e)
                         try:
-                            webhook_url = "http://109.205.181.248:5001/webhook"
-                            requests.post(webhook_url,format_event(event),timeout=5)
+                            producer.send(ANALYSIS_TOPIC, event)
+                            producer.flush()
+                        
+                            print(f"[KAFKA] Sent analysis for {uuid_part}")
                         except Exception as e:
-                            print("Webhook error:", e)
+                            print("KAFKA error:", e)
                     signal.alarm(0)
 
                 except DistributionTimeout:
