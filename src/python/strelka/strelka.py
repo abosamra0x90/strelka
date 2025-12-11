@@ -568,7 +568,10 @@ class Backend(object):
                             elif isinstance(event, str):
                                 event = json.loads(event)
                             name = file.name
-                            uuid_part, filename_part = name.split("___", 1)
+                            if "___" in name:
+                                uuid_part, filename_part = name.split("___", 1)
+                            else:
+                                uuid_part = "unknown"
                             event["email.uuid"] = uuid_part
                         except Exception as e:
                             print("Name Error:", e)
