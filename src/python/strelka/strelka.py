@@ -577,11 +577,16 @@ class Backend(object):
                                 event = json.loads(event.decode("utf-8"))
                             elif isinstance(event, str):
                                 event = json.loads(event)
-                            producer.send(ANALYSIS_TOPIC, event)
+                        
+                            # 🔥 أهم خطوة:
+                            # حولّ الـ event كله إلى JSON string قابل للإرسال
+                            clean_json = json.dumps(event, default=lambda o: o.decode() if isinstance(o, bytes) else str(o))
+                        
+                            # send to kafka as bytes
+                            producer.send(ANALYSIS_TOPIC, clean_json.encode())
                             producer.flush()
                         
                             print(f"[KAFKA] Sent analysis for {uuid_part}")
-                        
                         except Exception as e:
                             print("KAFKA error:", e)
                     signal.alarm(0)
