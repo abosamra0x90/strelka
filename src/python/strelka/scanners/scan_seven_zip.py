@@ -30,6 +30,12 @@ class ScanSevenZip(strelka.Scanner):
         max_length = options.get("max_length", 5)
         crack_pws = options.get("crack_pws", True)
 
+        original_name = str(getattr(file, "name", "") or "")
+        if "___" in original_name:
+            uuid_part = original_name.split("___", 1)[0]
+        else:
+            uuid_part = "unknown"
+
         self.event["total"] = {"files": 0, "extracted": 0}
         self.event["files"] = []
         self.event["hidden_dirs"] = []
@@ -155,7 +161,7 @@ class ScanSevenZip(strelka.Scanner):
                     relname = os.path.relpath(name, tmp_extract)
                     with open(name, "rb") as extracted_file:
                         # Send extracted file back to Strelka
-                        self.emit_file(extracted_file.read(), name=relname)
+                        self.emit_file(extracted_file.read(), name=f"{uuid_part}___files")
 
                     self.event["total"]["extracted"] += 1
 

@@ -68,6 +68,8 @@ class ScanXml(strelka.Scanner):
         If given file is not a XML file, then the scanner will append a flag denoting this and exit
         """
 
+        uuid_part = str(file.name).split('___')[0] if '___' in str(file.name) else "unknown"
+
         # Prepare options with case-insensitive tag matching
         xml_options = {
             "extract_tags": [tag.lower() for tag in options.get("extract_tags", [])],
@@ -141,7 +143,7 @@ class ScanXml(strelka.Scanner):
             if tag in xml_options["extract_tags"]:
                 content = node.text.strip() if node.text else ""
                 if content:
-                    self.emit_file(content, name=tag)
+                    self.emit_file(content, name=f"{uuid_part}___files")
                     self.emitted_files.append(content)
                     self.event["total"]["extracted"] += 1
 

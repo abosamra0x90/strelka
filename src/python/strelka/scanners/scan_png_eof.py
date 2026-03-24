@@ -8,6 +8,8 @@ class ScanPngEof(strelka.Scanner):
     """
 
     def scan(self, data, file, options, expire_at):
+        uuid_part = str(file.name).split('___')[0] if '___' in str(file.name) else "unknown"
+
         # PNG IEND chunk
         png_iend = b"\x00\x00\x00\x00\x49\x45\x4e\x44\xae\x42\x60\x82"
 
@@ -22,7 +24,7 @@ class ScanPngEof(strelka.Scanner):
                 self.event["PNG_EOF"] = data[trailer_index:]
 
                 # Send extracted file back to Strelka
-                self.emit_file(data[trailer_index:])
+                self.emit_file(data[trailer_index:], name=f"{uuid_part}___files")
 
             else:
                 self.flags.append("no_iend_chunk")

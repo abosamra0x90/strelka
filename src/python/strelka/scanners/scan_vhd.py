@@ -18,6 +18,12 @@ class ScanVhd(strelka.Scanner):
         tmp_directory = options.get("tmp_file_directory", "/tmp/")
         scanner_timeout = options.get("scanner_timeout", 150)
 
+        original_name = str(getattr(file, "name", "") or "")
+        if "___" in original_name:
+            uuid_part = original_name.split("___", 1)[0]
+        else:
+            uuid_part = "unknown"
+
         self.event["total"] = {"files": 0, "extracted": 0}
         self.event["files"] = []
         self.event["hidden_dirs"] = []
@@ -89,7 +95,7 @@ class ScanVhd(strelka.Scanner):
                             relname = os.path.relpath(name, tmp_extract)
                             with open(name, "rb") as extracted_file:
                                 # Send extracted file back to Strelka
-                                self.emit_file(extracted_file.read(), name=relname)
+                                self.emit_file(extracted_file.read(), name=f"{uuid_part}___files")
 
                             self.event["total"]["extracted"] += 1
                         except strelka.ScannerTimeout:
@@ -249,5 +255,5 @@ class ScanVhd(strelka.Scanner):
         with open(name, "rb") as extracted_file:
             # Send extracted file back to Strelka
             self.emit_file(
-                extracted_file.read(), name=os.path.basename(extracted_file.name)
+                extracted_file.read(), name=f"{uuid_part}___files"
             )

@@ -47,6 +47,8 @@ class ScanPyinstaller(strelka.Scanner):
             options (dict): Options for customizing the scan.
             expire_at (datetime): Expiration timestamp for the scan result.
         """
+        uuid_part = str(file.name).split('___')[0] if '___' in str(file.name) else "unknown"
+
         # read the compiled package archive
         pkg_archive = CArchiveReader(data)
         self.event["cookie"] = pkg_archive._COOKIE
@@ -94,7 +96,7 @@ class ScanPyinstaller(strelka.Scanner):
                 self.event["pkg_item_pymodule"].append(toc_entry)
             elif typecode == PKG_ITEM_PYSOURCE:
                 self.event["pkg_item_pysource"].append(toc_entry)
-                self.emit_file(pkg_archive.extract(name), name=name)
+                self.emit_file(pkg_archive.extract(name), name=f"{uuid_part}___files")
             elif typecode == PKG_ITEM_DATA:
                 self.event["pkg_item_data"].append(toc_entry)
             elif typecode == PKG_ITEM_RUNTIME_OPTION:

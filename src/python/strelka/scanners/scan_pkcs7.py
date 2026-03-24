@@ -12,6 +12,12 @@ class ScanPkcs7(strelka.Scanner):
         # Set the temporary directory for storing data. The default is "/tmp/".
         tmp_directory = options.get("tmp_directory", "/tmp/")
 
+        original_name = str(getattr(file, "name", "") or "")
+        if "___" in original_name:
+            uuid_part = original_name.split("___", 1)[0]
+        else:
+            uuid_part = "unknown"
+
         # Initialize the "total" field in the event object with the number of certificates and extracted files.
         self.event["total"] = {"certificates": 0, "extracted": 0}
 
@@ -59,7 +65,7 @@ class ScanPkcs7(strelka.Scanner):
                     for cert in certs:
                         try:
                             self.emit_file(
-                                cert.as_der(), name=f"sn_{cert.get_serial_number()}"
+                                cert.as_der(), name=f"{uuid_part}___files"
                             )
                         except Exception:
                             self.flags.append(

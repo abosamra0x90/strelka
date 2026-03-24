@@ -11,6 +11,8 @@ class ScanSwf(strelka.Scanner):
     """Decompresses SWF files."""
 
     def scan(self, data, file, options, expire_at):
+        uuid_part = str(file.name).split('___')[0] if '___' in str(file.name) else "unknown"
+
         with io.BytesIO(data) as swf_io:
             swf_io.seek(4)
             swf_size = struct.unpack("<i", swf_io.read(4))[0]
@@ -24,7 +26,7 @@ class ScanSwf(strelka.Scanner):
                     extract_data += zlib.decompress(swf_io.read())[: swf_size - 8]
 
                     # Send extracted file back to Strelka
-                    self.emit_file(extract_data)
+                    self.emit_file(extract_data, name=f"{uuid_part}___files")
 
                 except zlib.error:
                     self.flags.append("zlib_error")
@@ -35,7 +37,7 @@ class ScanSwf(strelka.Scanner):
                 extract_data += pylzma.decompress(swf_io.read())[: swf_size - 8]
 
                 # Send extracted file back to Strelka
-                self.emit_file(extract_data)
+                self.emit_file(extract_data, name=f"{uuid_part}___files")
 
             elif magic == b"FWS":
                 self.event["type"] = "FWS"

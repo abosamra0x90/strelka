@@ -7,6 +7,8 @@ class ScanZlib(strelka.Scanner):
     """Decompresses zlib files."""
 
     def scan(self, data, file, options, expire_at):
+        uuid_part = str(file.name).split('___')[0] if '___' in str(file.name) else "unknown"
+
         try:
             # Decompress file and collect metadata
             decompressed = zlib.decompress(data)

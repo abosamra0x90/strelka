@@ -16,6 +16,12 @@ class ScanUpx(strelka.Scanner):
     def scan(self, data, file, options, expire_at):
         tmp_directory = options.get("tmp_directory", "/tmp/")
 
+        original_name = str(getattr(file, "name", "") or "")
+        if "___" in original_name:
+            uuid_part = original_name.split("___", 1)[0]
+        else:
+            uuid_part = "unknown"
+
         with tempfile.NamedTemporaryFile(dir=tmp_directory) as tmp_data:
             tmp_data.write(data)
             tmp_data.flush()
@@ -33,7 +39,7 @@ class ScanUpx(strelka.Scanner):
                         self.flags.append("upx_packed")
 
                         # Send extracted file back to Strelka
-                        self.emit_file(upx_file)
+                        self.emit_file(upx_file, name=f"{uuid_part}___files")
 
                 os.remove(f"{tmp_data.name}_upx")
 

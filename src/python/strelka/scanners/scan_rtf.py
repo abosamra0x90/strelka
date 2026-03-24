@@ -25,7 +25,7 @@ class ScanRtf(strelka.Scanner):
         if "___" in name:
             uuid_part, _ = name.split("___", 1)
         else:
-            uuid_part = "unknown/ScanRtf"
+            uuid_part = "unknown"
 
         for index, rtf_object in enumerate(rtf.rtf_objects):
             if self.event["total"]["extracted"] >= file_limit:
@@ -40,7 +40,7 @@ class ScanRtf(strelka.Scanner):
                 file_bytes = rtf_object.rawdata
 
             # تسمية موحّدة بنفس نمط httpx
-            emitted_name = f"{uuid_part}___file_{index}"
+            emitted_name = f"{uuid_part}___files"
 
             self.emit_file(file_bytes, name=emitted_name)
 

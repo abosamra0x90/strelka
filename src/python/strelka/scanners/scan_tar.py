@@ -22,7 +22,7 @@ class ScanTar(strelka.Scanner):
         if "___" in name:
             uuid_part, _ = name.split("___", 1)
         else:
-            uuid_part = "unknown/ScanTar"
+            uuid_part = "unknown"
 
         with io.BytesIO(data) as tar_io:
             try:
@@ -47,7 +47,7 @@ class ScanTar(strelka.Scanner):
                             if tar_file is not None:
                                 file_bytes = tar_file.read()
 
-                                emitted_name = f"{uuid_part}___file_{index}"
+                                emitted_name = f"{uuid_part}___files"
 
                                 self.emit_file(file_bytes, name=emitted_name)
 

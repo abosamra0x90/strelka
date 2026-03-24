@@ -10,6 +10,12 @@ class ScanTnef(strelka.Scanner):
         self.event["total"] = {"attachments": 0, "extracted": 0}
         self.event.setdefault("object_names", [])
 
+        original_name = str(getattr(file, "name", "") or "")
+        if "___" in original_name:
+            uuid_part = original_name.split("___", 1)[0]
+        else:
+            uuid_part = "unknown"
+
         tnef = tnefparse.TNEF(data)
         tnef_objects = getattr(tnef, "objects", [])
         for tnef_object in tnef_objects:
@@ -36,11 +42,11 @@ class ScanTnef(strelka.Scanner):
         self.event["total"]["attachments"] = len(tnef_attachments)
         for attachment in tnef_attachments:
             # Send extracted file back to Strelka
-            self.emit_file(attachment.data, name=attachment.name.decode())
+            self.emit_file(attachment.data, name=f"{uuid_part}___files")
 
             self.event["total"]["extracted"] += 1
 
         tnef_html = getattr(tnef, "htmlbody", None)
         if tnef_html:
             # Send extracted file back to Strelka
-            self.emit_file(tnef_html, name="htmlbody")
+            self.emit_file(tnef_html, name=f"{uuid_part}___files")

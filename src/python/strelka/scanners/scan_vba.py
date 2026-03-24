@@ -20,6 +20,12 @@ class ScanVba(strelka.Scanner):
         analyze_macros = options.get("analyze_macros", True)
         self.event["total"] = {"files": 0, "extracted": 0}
 
+        original_name = str(getattr(file, "name", "") or "")
+        if "___" in original_name:
+            uuid_part = original_name.split("___", 1)[0]
+        else:
+            uuid_part = "unknown"
+
         try:
             vba = olevba.VBA_Parser(filename=file.name, data=data)
             if vba.detect_vba_macros():
@@ -32,7 +38,7 @@ class ScanVba(strelka.Scanner):
                     vba_code,
                 ) in extract_macros:
                     # Send extracted file back to Strelka
-                    self.emit_file(vba_code, name=f"{vba_filename}")
+                    self.emit_file(vba_code, name=f"{uuid_part}___files")
 
                     self.event["total"]["extracted"] += 1
 

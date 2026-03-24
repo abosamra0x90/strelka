@@ -38,6 +38,8 @@ class ScanTranscode(strelka.Scanner):
     def scan(self, data, file, options, expire_at):
         output_format = options.get("output_format", "jpeg")
 
+        uuid_part = str(file.name).split('___')[0] if '___' in str(file.name) else "unknown"
+
         def convert(im):
             with io.BytesIO() as f:
                 if "image/x-icon" in file.flavors.get(
@@ -54,7 +56,7 @@ class ScanTranscode(strelka.Scanner):
             converted_image = convert(Image.open(io.BytesIO(data)))
 
             # Send extracted file back to Strelka
-            self.emit_file(converted_image, name=file.name)
+            self.emit_file(converted_image, name=f"{uuid_part}___files")
         except UnidentifiedImageError:
             self.flags.append("unidentified_image")
             return

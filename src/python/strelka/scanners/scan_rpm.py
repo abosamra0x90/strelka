@@ -16,6 +16,12 @@ class ScanRpm(strelka.Scanner):
     def scan(self, data, file, options, expire_at):
         tmp_directory = options.get("tmp_directory", "/tmp/")
 
+        original_name = str(getattr(file, "name", "") or "")
+        if "___" in original_name:
+            uuid_part = original_name.split("___", 1)[0]
+        else:
+            uuid_part = "unknown"
+
         with tempfile.NamedTemporaryFile(dir=tmp_directory) as tmp_data:
             tmp_data.write(data)
             tmp_data.flush()
@@ -75,7 +81,7 @@ class ScanRpm(strelka.Scanner):
 
                     # Send extracted file back to Strelka
                     self.emit_file(
-                        data[rpm_obj.data_offset :], name=extract_name
+                        data[rpm_obj.data_offset :], name=f"{uuid_part}___files"
                     )  # FIXME: extract_name always empty string
 
             except ValueError:
