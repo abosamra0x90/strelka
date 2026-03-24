@@ -16,7 +16,7 @@ class ScanOnenote(strelka.Scanner):
     def scan(self, data, file, options, expire_at):
         self.event["total"] = {"files": 0, "extracted": 0}
 
-        uuid_part = file.name.split('___')[0] if '___' in file.name else "unknown"
+        uuid_part = str(file.name).split('___')[0] if '___' in str(file.name) else "unknown"
 
         try:
             # Searching for the magic string in the data

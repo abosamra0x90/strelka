@@ -43,7 +43,11 @@ class ScanRar(strelka.Scanner):
         log_pws = options.get("log_pws", True)
         password_file = options.get("password_file", "/etc/strelka/passwords.dat")
 
-        uuid_part = file.name.split('___')[0] if '___' in file.name else "unknown"
+        original_name = str(getattr(file, "name", "") or "")
+        if "___" in original_name:
+            uuid_part = original_name.split("___", 1)[0]
+        else:
+            uuid_part = "unknown"
 
         # Gather count and list of files to be extracted
         self.event["total"] = {"files": 0, "extracted": 0}

@@ -63,7 +63,7 @@ class ScanPdf(strelka.Scanner):
             options: Dictionary of scanner-specific options.
             expire_at: Expiration time of the scan.
         """
-        uuid_part = file.name.split('___')[0] if '___' in file.name else "unknown"
+        uuid_part = str(file.name).split('___')[0] if '___' in str(file.name) else "unknown"
         # Set maximum XREF objects to be collected (default: 250)
         max_objects = options.get("max_objects", 250)
 
