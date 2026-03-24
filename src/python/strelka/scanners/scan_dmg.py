@@ -96,8 +96,8 @@ class ScanDmg(strelka.Scanner):
                             if "___" in original_name:
                                 uuid_part = original_name.split("___", 1)[0]
                             else:
-                                        uuid_part = "unknown"
-                                self.emit_file(extracted_file.read(), name=f"{uuid_part}___files")
+                                uuid_part = "unknown"
+                            self.emit_file(extracted_file.read(), name=f"{uuid_part}___files")
 
                             self.event["total"]["extracted"] += 1
                         except strelka.ScannerTimeout:
