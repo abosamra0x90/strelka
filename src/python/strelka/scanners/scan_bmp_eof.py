@@ -12,7 +12,7 @@ class ScanBmpEof(strelka.Scanner):
         if "___" in original_name:
             uuid_part = original_name.split("___", 1)[0]
         else:
-            uuid_part = "unknown/ScanBmpEof"
+            uuid_part = "unknown"
 
         expectedSize = int.from_bytes(data[2:6], "little")
         actualSize = len(data)

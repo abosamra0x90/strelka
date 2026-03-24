@@ -8,7 +8,7 @@ class ScanGif(strelka.Scanner):
     """
 
     def scan(self, data, file, options, expire_at):
-        uuid_part = file.name.split('___')[0] if '___' in file.name else file.name
+        uuid_part = file.name.split('___')[0] if '___' in file.name else "unknown"
         if not data.endswith(b"\x00\x3b"):
             trailer_index = data.rfind(b"\x00\x3b")
             if trailer_index == -1:

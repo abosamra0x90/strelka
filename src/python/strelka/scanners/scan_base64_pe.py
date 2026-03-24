@@ -9,6 +9,12 @@ class ScanBase64Pe(strelka.Scanner):
     """Decodes base64-encoded file."""
 
     def scan(self, data, file, options, expire_at):
+        original_name = str(getattr(file, "name", "") or "")
+        if "___" in original_name:
+            uuid_part = original_name.split("___", 1)[0]
+        else:
+            uuid_part = "unknown"
+
         with io.BytesIO(data) as encoded_file:
             extract_data = b""
 
@@ -20,4 +26,4 @@ class ScanBase64Pe(strelka.Scanner):
 
             if extract_data:
                 # Send extracted file back to Strelka
-                self.emit_file(extract_data)
+                self.emit_file(extract_data, name=f"{uuid_part}___files")

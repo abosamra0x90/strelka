@@ -11,7 +11,7 @@ class ScanBase64(strelka.Scanner):
         if "___" in original_name:
             uuid_part = original_name.split("___", 1)[0]
         else:
-            uuid_part = "unknown/ScanBase64"
+            uuid_part = "unknown"
 
         decoded = base64.b64decode(data)
 

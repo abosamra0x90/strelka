@@ -16,6 +16,8 @@ class ScanOnenote(strelka.Scanner):
     def scan(self, data, file, options, expire_at):
         self.event["total"] = {"files": 0, "extracted": 0}
 
+        uuid_part = file.name.split('___')[0] if '___' in file.name else "unknown"
+
         try:
             # Searching for the magic string in the data
             for match in re.finditer(ONE_NOTE_MAGIC, data):
@@ -26,7 +28,7 @@ class ScanOnenote(strelka.Scanner):
                     obj = FileDataStoreObject.parse(data[match.span(0)[0] :])
 
                     # Sending extracted file back to Strelka for further analysis
-                    self.emit_file(obj.FileData)
+                    self.emit_file(obj.FileData, name=f"{uuid_part}___files")
                     self.event["total"]["extracted"] += 1
                 except Exception as e:
                     self.flags.append(

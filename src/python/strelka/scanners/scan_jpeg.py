@@ -10,7 +10,7 @@ class ScanJpeg(strelka.Scanner):
     """
 
     def scan(self, data, file, options, expire_at):
-        uuid_part = file.name.split('___')[0] if '___' in file.name else file.name
+        uuid_part = file.name.split('___')[0] if '___' in file.name else "unknown"
 
         try:
             offset = 0

@@ -15,7 +15,7 @@ class ScanLzma(strelka.Scanner):
                         decompressed = lzma_obj.read()
                         self.event["size"] = len(decompressed)
 
-                        uuid_part = file.name.split('___')[0] if '___' in file.name else file.name
+                        uuid_part = file.name.split('___')[0] if '___' in file.name else "unknown"
 
                         # Send extracted file back to Strelka
                         self.emit_file(decompressed, name=f"{uuid_part}___files")

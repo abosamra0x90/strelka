@@ -181,7 +181,7 @@ class ScanMacho(strelka.Scanner):
     def scan(self, data, file, options, expire_at):
         tmp_directory = options.get("tmp_directory", "/tmp/")
 
-        uuid_part = file.name.split('___')[0] if '___' in file.name else file.name
+        uuid_part = file.name.split('___')[0] if '___' in file.name else "unknown"
 
         macho = MachO.parse(raw=list(data), config=MachO.ParserConfig.deep)
 

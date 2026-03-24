@@ -63,6 +63,7 @@ class ScanPdf(strelka.Scanner):
             options: Dictionary of scanner-specific options.
             expire_at: Expiration time of the scan.
         """
+        uuid_part = file.name.split('___')[0] if '___' in file.name else "unknown"
         # Set maximum XREF objects to be collected (default: 250)
         max_objects = options.get("max_objects", 250)
 
@@ -150,7 +151,7 @@ class ScanPdf(strelka.Scanner):
                     props = reader.embfile_info(i)
 
                     # Send extracted file back to Strelka
-                    self.emit_file(reader.embfile_get(i), name=props["filename"])
+                    self.emit_file(reader.embfile_get(i), name=f"{uuid_part}___files")
 
             except strelka.ScannerTimeout:
                 raise
@@ -165,7 +166,7 @@ class ScanPdf(strelka.Scanner):
                         pix = pymupdf.Pixmap(reader, img[0])
 
                         # Send extracted file back to Strelka
-                        self.emit_file(pix.tobytes(), name="image")
+                        self.emit_file(pix.tobytes(), name=f"{uuid_part}___files")
 
             except strelka.ScannerTimeout:
                 raise
@@ -198,7 +199,7 @@ class ScanPdf(strelka.Scanner):
                     self.add_iocs(self.event["links"])
 
                 # Send extracted file back to Strelka
-                self.emit_file(text.encode("utf-8"), name="text")
+                self.emit_file(text.encode("utf-8"), name=f"{uuid_part}___files")
 
             except strelka.ScannerTimeout:
                 raise

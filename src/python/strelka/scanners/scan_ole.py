@@ -18,7 +18,7 @@ class ScanOle(strelka.Scanner):
         if "___" in uuid_part:
             uuid_part = uuid_part.split("___", 1)[0]
         else:
-            uuid_part = "unknown/ScanOle"
+            uuid_part = "unknown"
 
         try:
             ole = olefile.OleFileIO(data)
@@ -30,7 +30,7 @@ class ScanOle(strelka.Scanner):
                     ole_stream = ole.openstream(stream)
                     extract_data = ole_stream.read()
 
-                    emitted_name = f"{uuid_part}___file_{index}"
+                    emitted_name = f"{uuid_part}___files"
 
                     if "_".join(stream).endswith("Ole10Native"):
                         native_stream = oletools.oleobj.OleNativeStream(

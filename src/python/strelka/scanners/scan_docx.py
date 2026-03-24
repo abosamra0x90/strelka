@@ -81,7 +81,7 @@ class ScanDocx(strelka.Scanner):
                     if "___" in original_name:
                         uuid_part = original_name.split("___", 1)[0]
                     else:
-                        uuid_part = "unknown/ScanDocx"
+                        uuid_part = "unknown"
 
                     # Send extracted file back to Strelka
                     self.emit_file(text.encode("utf-8"), name=f"{uuid_part}___files")

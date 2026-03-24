@@ -18,7 +18,7 @@ class ScanBzip2(strelka.Scanner):
                     if "___" in original_name:
                         uuid_part = original_name.split("___", 1)[0]
                     else:
-                        uuid_part = "unknown/ScanBzip2"
+                        uuid_part = "unknown"
 
                     # Send extracted file back to Strelka
                     self.emit_file(decompressed, name=f"{uuid_part}___files")

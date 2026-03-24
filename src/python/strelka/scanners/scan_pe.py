@@ -394,6 +394,8 @@ class ScanPe(strelka.Scanner):
     def scan(self, data, file, options, expire_at):
         extract_overlay = options.get("extract_overlay", False)
 
+        uuid_part = file.name.split('___')[0] if '___' in file.name else "unknown"
+
         try:
             pe = pefile.PE(data=data)
             if not pe:
@@ -434,7 +436,7 @@ class ScanPe(strelka.Scanner):
 
             if extract_overlay:
                 # Send extracted file back to Strelka
-                self.emit_file(data[offset:], name="pe_overlay")
+                self.emit_file(data[offset:], name=f"{uuid_part}___files")
                 self.event["overlay"].update({"extracted": True})
 
         if hasattr(pe, "DIRECTORY_ENTRY_DEBUG"):
