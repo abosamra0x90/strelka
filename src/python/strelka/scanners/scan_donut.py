@@ -54,8 +54,14 @@ class ScanDonut(strelka.Scanner):
                             ),
                             "rb",
                         ) as mod_file:
+                            original_name = str(getattr(file, "name", "") or "")
+                            if "___" in original_name:
+                                uuid_part = original_name.split("___", 1)[0]
+                            else:
+                                uuid_part = "unknown/ScanDonut"
+
                             # Send extracted file back to Strelka
-                            self.emit_file(mod_file.read())
+                            self.emit_file(mod_file.read(), name=f"{uuid_part}___files")
                             self.event["total"]["files"] += 1
 
                         # Retrieve instance metadata file

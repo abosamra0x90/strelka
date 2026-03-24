@@ -10,6 +10,8 @@ class ScanJpeg(strelka.Scanner):
     """
 
     def scan(self, data, file, options, expire_at):
+        uuid_part = file.name.split('___')[0] if '___' in file.name else file.name
+
         try:
             offset = 0
 
@@ -78,7 +80,7 @@ class ScanJpeg(strelka.Scanner):
                 self.event["trailer_index"] = offset
 
                 # Send extracted file back to Strelka
-                self.emit_file(trailer_data)
+                self.emit_file(trailer_data, name=f"{uuid_part}___files")
         except Exception:
             self.flags.append("jpeg_general_parsing_error")
             return

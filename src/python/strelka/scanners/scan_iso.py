@@ -111,8 +111,14 @@ class ScanIso(strelka.Scanner):
                                     file_io.seek(0)
                                     extract_data = file_io.read()
 
+                                    original_name = str(getattr(file, "name", "") or "")
+                                    if "___" in original_name:
+                                        uuid_part = original_name.split("___", 1)[0]
+                                    else:
+                                        uuid_part = "unknown/ScanIso"
+
                                     # Send extracted file back to Strelka
-                                    self.emit_file(extract_data, name=ident_to_here)
+                                    self.emit_file(extract_data, name=f"{uuid_part}___files")
 
                                     self.event["total"]["extracted"] += 1
                                 except strelka.ScannerTimeout:

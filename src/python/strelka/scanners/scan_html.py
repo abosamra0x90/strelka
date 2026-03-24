@@ -23,7 +23,6 @@ class ScanHtml(strelka.Scanner):
             "extracted": 0,
         }
 
-        # ✅ استخراج uuid بشكل آمن (بدون التأثير على أي سلوك)
         original_name = str(getattr(file, "name", "") or "")
         if "___" in original_name:
             uuid_part = original_name.split("___", 1)[0]
@@ -49,7 +48,6 @@ class ScanHtml(strelka.Scanner):
                 if link and link.startswith("data:") and ";base64," in link:
                     hyperlink_data = link.split(";base64,")[1]
 
-                    # 🔥 غيرنا الاسم فقط
                     self.emit_file(
                         hyperlink_data.encode(),
                         name=f"{uuid_part}___file_{extract_index}",

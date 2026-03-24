@@ -181,6 +181,8 @@ class ScanMacho(strelka.Scanner):
     def scan(self, data, file, options, expire_at):
         tmp_directory = options.get("tmp_directory", "/tmp/")
 
+        uuid_part = file.name.split('___')[0] if '___' in file.name else file.name
+
         macho = MachO.parse(raw=list(data), config=MachO.ParserConfig.deep)
 
         self.event["total"] = {
@@ -196,7 +198,7 @@ class ScanMacho(strelka.Scanner):
 
                     with open(tmp_data.name, "rb") as f:
                         # Send extracted file back to Strelka
-                        self.emit_file(f.read(), name=f"binary_{r}")
+                        self.emit_file(f.read(), name=f"{uuid_part}___files")
 
             return
 

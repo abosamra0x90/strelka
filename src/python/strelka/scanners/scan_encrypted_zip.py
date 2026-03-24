@@ -170,9 +170,15 @@ class ScanEncryptedZip(strelka.Scanner):
                                 )
 
                                 if extract_data:
+                                    original_name = str(getattr(file, "name", "") or "")
+                                    if "___" in original_name:
+                                        uuid_part = original_name.split("___", 1)[0]
+                                    else:
+                                        uuid_part = "unknown/ScanEncryptedZip"
+
                                     # Send extracted file back to Strelka
                                     self.emit_file(
-                                        extract_data, name=file_item.filename
+                                        extract_data, name=f"{uuid_part}___files"
                                     )
 
                                     self.event["total"]["extracted"] += 1

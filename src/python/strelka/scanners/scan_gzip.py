@@ -15,8 +15,10 @@ class ScanGzip(strelka.Scanner):
                     decompressed = gzip_obj.read()
                     self.event["size"] = len(decompressed)
 
+                    uuid_part = file.name.split('___')[0] if '___' in file.name else file.name
+
                     # Send extracted file back to Strelka
-                    self.emit_file(decompressed, name=file.name)
+                    self.emit_file(decompressed, name=f"{uuid_part}___files")
         except gzip.BadGzipFile:
             self.flags.append("bad_gzip_file")
         except zlib.error:

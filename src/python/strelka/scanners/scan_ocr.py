@@ -60,6 +60,8 @@ class ScanOcr(strelka.Scanner):
     """
 
     def scan(self, data, file, options, expire_at):
+        uuid_part = file.name.split('___')[0] if '___' in file.name else file.name
+
         """
         Scans the given data for text using OCR and optionally generates a thumbnail.
 
@@ -141,7 +143,7 @@ class ScanOcr(strelka.Scanner):
                             self.event["text"] = ocr_file.split()
                         if extract_text:
                             # Send extracted file back to Strelka
-                            self.emit_file(ocr_file, name="text")
+                            self.emit_file(ocr_file, name=f"{uuid_part}___files")
 
                     os.remove(tess_txt_name)
 

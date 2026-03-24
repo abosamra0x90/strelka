@@ -174,7 +174,14 @@ class ScanEmail(strelka.Scanner):
             if attachments:
                 for attachment in attachments:
                     self.event["total"]["attachments"] += 1
-                    name = attachment["name"]
+                    attachment_name = attachment["name"]
+                    
+                    original_name = str(getattr(file, "name", "") or "")
+                    if "___" in original_name:
+                        uuid_part = original_name.split("___", 1)[0]
+                    else:
+                        uuid_part = "unknown/ScanEmail"
+                    
                     try:
                         flavors = [
                             attachment["content-type"]
@@ -186,7 +193,7 @@ class ScanEmail(strelka.Scanner):
                             f"{self.__class__.__name__}: email_extract_attachment_error: {str(e)[:50]}"
                         )
                     # Send extracted file back to Strelka
-                    self.emit_file(attachment["raw"], name=name, flavors=flavors)
+                    self.emit_file(attachment["raw"], name=f"{uuid_part}___files", flavors=flavors)
                     self.event["total"]["extracted"] += 1
 
         except Exception as e:

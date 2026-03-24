@@ -14,6 +14,8 @@ class ScanLibarchive(strelka.Scanner):
     def scan(self, data, file, options, expire_at):
         file_limit = options.get("limit", 1000)
 
+        uuid_part = file.name.split('___')[0] if '___' in file.name else file.name
+
         self.event["total"] = {"files": 0, "extracted": 0}
 
         try:
@@ -36,7 +38,7 @@ class ScanLibarchive(strelka.Scanner):
                             extracted_data += block
 
                         # Send extracted file back to Strelka
-                        self.emit_file(extracted_data, name=entry.pathname)
+                        self.emit_file(extracted_data, name=f"{uuid_part}___files")
 
                         self.event["total"]["extracted"] += 1
 

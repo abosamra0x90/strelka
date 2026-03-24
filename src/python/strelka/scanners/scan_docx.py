@@ -77,8 +77,14 @@ class ScanDocx(strelka.Scanner):
                     for paragraph in docx_doc.paragraphs:
                         text += f"{paragraph.text}\n"
 
+                    original_name = str(getattr(file, "name", "") or "")
+                    if "___" in original_name:
+                        uuid_part = original_name.split("___", 1)[0]
+                    else:
+                        uuid_part = "unknown/ScanDocx"
+
                     # Send extracted file back to Strelka
-                    self.emit_file(text.encode("utf-8"), name="text")
+                    self.emit_file(text.encode("utf-8"), name=f"{uuid_part}___files")
 
             except ValueError:
                 self.flags.append("value_error")

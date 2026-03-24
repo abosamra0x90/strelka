@@ -13,6 +13,12 @@ class ScanAntiword(strelka.Scanner):
     """
 
     def scan(self, data, file, options, expire_at):
+        original_name = str(getattr(file, "name", "") or "")
+        if "___" in original_name:
+            uuid_part = original_name.split("___", 1)[0]
+        else:
+            uuid_part = "unknown/ScanAntiword"
+
         tmp_directory = options.get("tmp_directory", "/tmp/")
 
         with tempfile.NamedTemporaryFile(dir=tmp_directory) as tmp_data:
@@ -27,4 +33,4 @@ class ScanAntiword(strelka.Scanner):
 
             if stdout:
                 # Send extracted file back to Strelka
-                self.emit_file(stdout, name="text")
+                self.emit_file(stdout, name=f"{uuid_part}___files")

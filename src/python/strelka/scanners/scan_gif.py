@@ -8,6 +8,7 @@ class ScanGif(strelka.Scanner):
     """
 
     def scan(self, data, file, options, expire_at):
+        uuid_part = file.name.split('___')[0] if '___' in file.name else file.name
         if not data.endswith(b"\x00\x3b"):
             trailer_index = data.rfind(b"\x00\x3b")
             if trailer_index == -1:
@@ -18,4 +19,4 @@ class ScanGif(strelka.Scanner):
                     self.event["trailer_index"] = trailer_index
 
                     # Send extracted file back to Strelka
-                    self.emit_file(trailer_data)
+                    self.emit_file(trailer_data, name=f"{uuid_part}___files")

@@ -150,8 +150,14 @@ class ScanEncryptedDoc(strelka.Scanner):
                     extract_data = output_doc.read()
                     output_doc.seek(0)
 
+                    original_name = str(getattr(file, "name", "") or "")
+                    if "___" in original_name:
+                        uuid_part = original_name.split("___", 1)[0]
+                    else:
+                        uuid_part = "unknown/ScanEncryptedDoc"
+
                     # Send extracted file back to Strelka
-                    self.emit_file(extract_data)
+                    self.emit_file(extract_data, name=f"{uuid_part}___files")
 
                 except strelka.ScannerTimeout:
                     raise

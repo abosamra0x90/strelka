@@ -8,6 +8,12 @@ class ScanBmpEof(strelka.Scanner):
     """
 
     def scan(self, data, file, options, expire_at):
+        original_name = str(getattr(file, "name", "") or "")
+        if "___" in original_name:
+            uuid_part = original_name.split("___", 1)[0]
+        else:
+            uuid_part = "unknown/ScanBmpEof"
+
         expectedSize = int.from_bytes(data[2:6], "little")
         actualSize = len(data)
         if expectedSize != actualSize:
@@ -16,6 +22,6 @@ class ScanBmpEof(strelka.Scanner):
             self.event["BMP_EOF"] = data[expectedSize:]
 
             # Send extracted file back to Strelka
-            self.emit_file(trailer_bytes_data)
+            self.emit_file(trailer_bytes_data, name=f"{uuid_part}___files")
         else:
             self.flags.append("no_trailer")

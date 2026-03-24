@@ -14,8 +14,14 @@ class ScanBzip2(strelka.Scanner):
                     decompressed = bzip2_obj.read()
                     self.event["size"] = len(decompressed)
 
+                    original_name = str(getattr(file, "name", "") or "")
+                    if "___" in original_name:
+                        uuid_part = original_name.split("___", 1)[0]
+                    else:
+                        uuid_part = "unknown/ScanBzip2"
+
                     # Send extracted file back to Strelka
-                    self.emit_file(decompressed, name=file.name)
+                    self.emit_file(decompressed, name=f"{uuid_part}___files")
 
                 except EOFError:
                     self.flags.append("eof_error")
