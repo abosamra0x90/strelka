@@ -29,7 +29,7 @@ class ScanSevenZip(strelka.Scanner):
         min_length = options.get("min_length", 1)
         max_length = options.get("max_length", 5)
         crack_pws = options.get("crack_pws", True)
-
+        uuid_part = "unknown"
         original_name = str(getattr(file, "name", "") or "")
         if "___" in original_name:
             uuid_part = original_name.split("___", 1)[0]
