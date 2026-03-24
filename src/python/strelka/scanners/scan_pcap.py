@@ -33,8 +33,6 @@ class ScanPcap(strelka.Scanner):
         self.expire_at = expire_at
         self.file_limit: int = options.get("limit", 1000)
         self.tmp_directory: str = options.get("tmp_file_directory", "/tmp/")
-
-        uuid_part = str(file.name).split('___')[0] if '___' in str(file.name) else "unknown"
         self.zeek_conn: Optional[bool] = options.get("zeek_conn", True)
         self.zeek_conn_limit: Optional[int] = options.get("zeek_conn_limit", 100)
         self.zeek_proto: Optional[bool] = options.get("zeek_proto", True)
@@ -460,4 +458,4 @@ class ScanPcap(strelka.Scanner):
         """
         with open(name, "rb") as extracted_file:
             # Send extracted file back to Strelka
-            self.emit_file(extracted_file.read(), name=f"{uuid_part}___files")
+            self.emit_file(extracted_file.read())
