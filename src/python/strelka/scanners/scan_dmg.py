@@ -92,13 +92,9 @@ class ScanDmg(strelka.Scanner):
 
                         try:
                             relname = os.path.relpath(name, tmp_extract)
-                            original_name = str(getattr(file, "name", "") or "")
-                            if "___" in original_name:
-                                uuid_part = original_name.split("___", 1)[0]
-                            else:
-                                uuid_part = "unknown"
                             with open(name, "rb") as extracted_file:
-                                self.emit_file(extracted_file.read(), name=f"{uuid_part}___files")
+                                # Send extracted file back to Strelka
+                                self.emit_file(extracted_file.read(), name=relname)
 
                             self.event["total"]["extracted"] += 1
                         except strelka.ScannerTimeout:
