@@ -94,7 +94,7 @@ class ScanXml(strelka.Scanner):
             self.event["version"] = docinfo.xml_version if docinfo.xml_version else ""
 
             # Recursively process each node in the XML
-            self._recurse_node(xml, xml_options)
+            self._recurse_node(xml, xml_options, uuid_part)
 
         except Exception as e:
             # If file given is not an XML file, do not proceed with ScanXML
@@ -118,7 +118,7 @@ class ScanXml(strelka.Scanner):
         # Extract and add Indicators of Compromise (IOCs)
         self.add_iocs(extract_iocs_from_string(data.decode("utf-8")))
 
-    def _recurse_node(self, node: etree._Element, xml_options: Dict[str, Any]) -> None:
+    def _recurse_node(self, node: etree._Element, xml_options: Dict[str, Any], uuid_part: str) -> None:
         """
         Recursively processes each XML node to extract data and metadata.
 
@@ -152,7 +152,7 @@ class ScanXml(strelka.Scanner):
 
             # Continue to recurse through child nodes to extract data
             for child in node.getchildren():
-                self._recurse_node(child, xml_options)
+                self._recurse_node(child, xml_options, uuid_part)
 
     def _process_attributes(
         self, node: etree._Element, xml_options: Dict[str, Any], tag: str
