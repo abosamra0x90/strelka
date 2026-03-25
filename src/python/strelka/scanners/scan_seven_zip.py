@@ -90,15 +90,16 @@ class ScanSevenZip(strelka.Scanner):
                     scanner_timeout,
                     expire_at,
                     file_limit,
+                    uuid_part,
                     password=extracted_pw.decode("utf-8"),
                 )
             else:
                 self.extract_7zip(
-                    data, tmp_directory, scanner_timeout, expire_at, file_limit
+                    data, tmp_directory, scanner_timeout, expire_at, file_limit, uuid_part
                 )
 
     def extract_7zip(
-        self, data, tmp_dir, scanner_timeout, expire_at, file_limit, password=""
+        self, data, tmp_dir, scanner_timeout, expire_at, file_limit, uuid_part, password=""
     ):
         """Decompress input file to /tmp with 7zz, send files to coordinator"""
 

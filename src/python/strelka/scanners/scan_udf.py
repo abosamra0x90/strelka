@@ -31,7 +31,7 @@ class ScanUdf(strelka.Scanner):
 
         try:
             self.extract_7zip(
-                data, tmp_directory, scanner_timeout, expire_at, file_limit
+                data, tmp_directory, scanner_timeout, expire_at, file_limit, uuid_part
             )
 
         except strelka.ScannerTimeout:
@@ -39,7 +39,7 @@ class ScanUdf(strelka.Scanner):
         except Exception:
             self.flags.append("vhd_7zip_extract_error")
 
-    def extract_7zip(self, data, tmp_dir, scanner_timeout, expire_at, file_limit):
+    def extract_7zip(self, data, tmp_dir, scanner_timeout, expire_at, file_limit, uuid_part):
         """Decompress input file to /tmp with 7zz, send files to coordinator"""
 
         # Check if 7zip package is installed
